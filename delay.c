@@ -1,9 +1,11 @@
 #include "stm32f10x.h"
 #include "stm32f10x_conf.h"
 #include "delay.h"
+#include "portio.h"
 
 
-volatile unsigned long delay_timer[DELAY_MAXTIMERS];
+volatile uint32_t delay_timer[DELAY_MAXTIMERS];
+uint8_t test;
 
 
 
@@ -29,16 +31,18 @@ void delay_Init(void)
     
     NVIC_Init(&NVIC_InitStructure);
     
-    TIM_TimeBaseStructure.TIM_Period = 99;  //1kHz
+
+    TIM_TimeBaseStructure.TIM_Period = 1000;  //1kHz
     TIM_TimeBaseStructure.TIM_Prescaler = 36;
     TIM_TimeBaseStructure.TIM_ClockDivision = 0;
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 
     TIM_TimeBaseInit(TIM1,&TIM_TimeBaseStructure);
     
+
     TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Timing;
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-    TIM_OCInitStructure.TIM_Pulse = 49;
+    TIM_OCInitStructure.TIM_Pulse = 999;
     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 
     TIM_OC1Init(TIM1, &TIM_OCInitStructure);
@@ -64,7 +68,7 @@ void delay_MsBlockWait(uint32_t time, uint8_t timer)
 {
     delay_timer[timer] = 0;
 
-    while (delay_timer[timer] < (time * 10));
+    while (delay_timer[timer] < time);
 }
 
 void TIM1_CC_IRQHandler(void)
@@ -73,8 +77,6 @@ void TIM1_CC_IRQHandler(void)
 
     if(TIM_GetITStatus(TIM1,TIM_IT_CC1) == SET)
     {
-        TIM_ClearITPendingBit(TIM1, TIM_IT_CC1);
-        
         for (i = 0; i < DELAY_MAXTIMERS; ++i) {
             ++delay_timer[i];
     
@@ -82,19 +84,7 @@ void TIM1_CC_IRQHandler(void)
                 delay_timer[i] = 0xfffffffa;
         }
         
-        // if(test)
-        // {
-            // test = 0;
-            // portio_Led(PORTIO_LEDG,PORTIO_OFF);
-        // }
-        // else
-        // {
-            // test = 1;
-            // portio_Led(PORTIO_LEDG,PORTIO_ON);
-        // }
-        //----------------------------------------------------
-        //TIM_SetCompare1(TIM1,TIM_GetCapture1(TIM1) + DELAY_PULSE);
-        //----------------------------------------------------
+        TIM_ClearITPendingBit(TIM1, TIM_IT_CC1);
     }
 }
 

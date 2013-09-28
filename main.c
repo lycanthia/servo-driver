@@ -8,6 +8,7 @@
  * */
 
 #include "stm32f10x.h"
+#include "stm32f10x_conf.h"
 
 #include "portio.h"
 #include "delay.h"
@@ -19,19 +20,17 @@ void main_Init();
 int main(void)
 {
     uint8_t i = 0;
-    int8_t e = -10;
 
     main_Init();    //init everything
 
-    if (e == -10)
     for ( i = 0; i < 20; ++i) {
         portio_Led(PORTIO_LED_R, PORTIO_ON);
         portio_Led(PORTIO_LED_G, PORTIO_ON);
-        delay_MsBlockWait(100, DEALY_TIMER0);
+        delay_MsBlockWait(1000, DEALY_TIMER0);
 
         portio_Led(PORTIO_LED_R, PORTIO_OFF);
         portio_Led(PORTIO_LED_G, PORTIO_OFF);
-        delay_MsBlockWait(100, DEALY_TIMER0);
+        delay_MsBlockWait(1000, DEALY_TIMER0);
     }
 
     //chcking for input
@@ -49,10 +48,38 @@ int main(void)
     return 0;
 }
 
+void rcc_Init(void)
+{
+    ErrorStatus HSEStartUpStatus;
 
+    RCC_DeInit();
+    RCC_HSEConfig(RCC_HSE_ON);
+
+    HSEStartUpStatus = RCC_WaitForHSEStartUp();
+
+    if (HSEStartUpStatus == SUCCESS) {
+        FLASH_PrefetchBufferCmd(FLASH_PrefetchBuffer_Enable);
+        //for 36MHz latency is 1
+        FLASH_SetLatency(FLASH_Latency_1);
+
+        RCC_HCLKConfig(RCC_SYSCLK_Div1);
+
+        RCC_PCLK2Config(RCC_HCLK_Div1);
+        RCC_PCLK1Config(RCC_HCLK_Div1);
+
+        RCC_PLLConfig(RCC_PLLSource_HSE_Div1, RCC_PLLMul_4);
+        RCC_PLLCmd(ENABLE);
+        while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET);
+
+        RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
+        while (RCC_GetSYSCLKSource() != 0x08);
+    }
+}
 
 void main_Init(void)
 {
+    rcc_Init();
+
     portio_Init();
     delay_Init();
 }
