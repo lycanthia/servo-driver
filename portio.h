@@ -8,9 +8,8 @@
 #include "stm32f10x.h"
 #include "stm32f10x_conf.h"
 
-#define PORTIO_ON   1
-#define PORTIO_OFF  0
-#define PORTIO_BLINK    2
+#define PORTIO_OFF      0
+#define PORTIO_ON       1
 
 #define PORTIO_LED_R GPIO_Pin_0
 #define PORTIO_LED_G GPIO_Pin_1
@@ -21,8 +20,8 @@
 
 
 void portio_Init(void);
-void portio_Led(unsigned short number, char status);
-char portio_CheckButton(unsigned short number);
+void portio_Led(uint16_t, int8_t status);
+int8_t portio_CheckButton(uint16_t number);
 
 
 

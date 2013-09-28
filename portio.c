@@ -26,15 +26,15 @@ void portio_Init(void)
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 }
 
-void portio_Led(unsigned short number, char status)
+void portio_Led(uint16_t number, int8_t action)
 {
-    if(status)
+    if(action)
         GPIO_SetBits(GPIOA, number);
     else
         GPIO_ResetBits(GPIOA, number);
 }
 
-char portio_CheckButton(unsigned short number)
+int8_t portio_CheckButton(uint16_t number)
 {
     if(GPIO_ReadInputDataBit(GPIOB, number))
     	return 0;

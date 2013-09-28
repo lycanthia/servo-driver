@@ -18,8 +18,8 @@ void main_Init();
 
 int main(void)
 {
-    unsigned int i = 0;
-    char e = -10;
+    uint8_t i = 0;
+    int8_t e = -10;
 
     main_Init();    //init everything
 

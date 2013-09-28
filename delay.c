@@ -9,7 +9,7 @@ volatile unsigned long delay_timer[DELAY_MAXTIMERS];
 
 void delay_Init(void)
 {
-    int i = 0;
+    uint8_t i = 0;
 
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
     TIM_OCInitTypeDef TIM_OCInitStructure;
@@ -19,7 +19,7 @@ void delay_Init(void)
     for (i = 0; i < DELAY_MAXTIMERS; i++)
         delay_timer[i] = 0;
    
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1,ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
    
     //NVIC
     NVIC_InitStructure.NVIC_IRQChannel = TIM1_CC_IRQn;
@@ -41,54 +41,45 @@ void delay_Init(void)
     TIM_OCInitStructure.TIM_Pulse = 49;
     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 
-    TIM_OC1Init(TIM1,&TIM_OCInitStructure);
+    TIM_OC1Init(TIM1, &TIM_OCInitStructure);
     
-    TIM_OC1PreloadConfig(TIM1,TIM_OCPreload_Enable);
+    TIM_OC1PreloadConfig(TIM1, TIM_OCPreload_Enable);
 
-    TIM_ITConfig(TIM1,TIM_IT_CC1,ENABLE);
+    TIM_ITConfig(TIM1, TIM_IT_CC1, ENABLE);
     
-    TIM_Cmd(TIM1,ENABLE);
+    TIM_Cmd(TIM1, ENABLE);
 }
 
-void delay_ClearTimer(int timer)
+void delay_ClearTimer(uint8_t timer)
 {
     delay_timer[timer] = 0;
 }
 
-unsigned long delay_GetTimer(int timer)
+uint32_t delay_GetTimer(uint8_t timer)
 {
     return delay_timer[timer];
 }
 
-void delay_MsBlockWait(unsigned long time, int timer)
+void delay_MsBlockWait(uint32_t time, uint8_t timer)
 {
     delay_timer[timer] = 0;
 
     while (delay_timer[timer] < (time * 10));
 }
 
-void delay_100usBlockWait(unsigned long time, int timer)
-{
-    delay_timer[timer] = 0;
-
-    while (delay_timer[timer] < time);
-}
-
-
-
 void TIM1_CC_IRQHandler(void)
 {
-    int i = 0;
+    uint8_t i = 0;
 
     if(TIM_GetITStatus(TIM1,TIM_IT_CC1) == SET)
     {
-        TIM_ClearITPendingBit(TIM1,TIM_IT_CC1);
+        TIM_ClearITPendingBit(TIM1, TIM_IT_CC1);
         
-        for (i = 0; i < DELAY_MAXTIMERS; i++) {
-            delay_timer[i]++;
+        for (i = 0; i < DELAY_MAXTIMERS; ++i) {
+            ++delay_timer[i];
     
-            if(delay_timer[i] > 9999999)
-                delay_timer[i] = 9999999;
+            if(delay_timer[i] > 0xfffffffa)
+                delay_timer[i] = 0xfffffffa;
         }
         
         // if(test)
