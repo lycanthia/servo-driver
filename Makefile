@@ -26,7 +26,7 @@ RM = rm
 #=============================================================================#
 
 # project name
-PROJECT = stm32-test
+PROJECT = servo-driver
 
 # core type
 CORE = cortex-m3

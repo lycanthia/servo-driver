@@ -1,7 +1,7 @@
 #include "stm32f10x.h"
 #include "stm32f10x_conf.h"
 #include "delay.h"
-#include "portio.h"
+
 
 
 volatile uint32_t delay_timer[DELAY_MAXTIMERS];
@@ -32,8 +32,8 @@ void delay_Init(void)
     NVIC_Init(&NVIC_InitStructure);
     
 
-    TIM_TimeBaseStructure.TIM_Period = 1000;  //1kHz
-    TIM_TimeBaseStructure.TIM_Prescaler = 36;
+    TIM_TimeBaseStructure.TIM_Period = 999;  //1kHz
+    TIM_TimeBaseStructure.TIM_Prescaler = 32;
     TIM_TimeBaseStructure.TIM_ClockDivision = 0;
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 

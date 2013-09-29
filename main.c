@@ -12,6 +12,7 @@
 
 #include "portio.h"
 #include "delay.h"
+#include "servo.h"
 
 
 
@@ -84,5 +85,6 @@ void main_Init(void)
 
     portio_Init();
     delay_Init();
+    servo_Init();
 }
 
