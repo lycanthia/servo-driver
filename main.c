@@ -64,9 +64,11 @@ void rcc_Init(void)
 
         RCC_HCLKConfig(RCC_SYSCLK_Div1);
 
+        //clock settings for system bus
         RCC_PCLK2Config(RCC_HCLK_Div1);
         RCC_PCLK1Config(RCC_HCLK_Div1);
 
+        //4 * 8MHz equal almost 36MHz
         RCC_PLLConfig(RCC_PLLSource_HSE_Div1, RCC_PLLMul_4);
         RCC_PLLCmd(ENABLE);
         while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET);
