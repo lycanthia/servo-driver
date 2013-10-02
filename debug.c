@@ -68,7 +68,7 @@ void debug_Init(void)
     USART_Init(USART1, &USART_InitStructure);
    
     //we enable this interrupt only when buffer will be ready to send 
-    //USART_ITConfig(USART1,USART_IT_TXE, ENABLE);
+    USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
     USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 
     USART_Cmd(USART1, ENABLE);
@@ -96,7 +96,7 @@ void debug_Print(const char *msg)
 void debug_ParseIncoming(void)
 {
     if (g_receivedMessage) {
-        debug_Print(":D\n\r");
+        //
 
         g_receivedMessage = 0;
     }
@@ -119,16 +119,17 @@ void USART1_IRQHandler(void)
 
     if (USART_GetITStatus(USART1, USART_IT_TXE) == SET) {
         if (g_bytesToSend) {
-            portio_Led(PORTIO_LED_G, PORTIO_ON);
+            portio_Led(PORTIO_LED_R, PORTIO_ON);
             USART_SendData(USART1, g_txBuffer[g_sendIndex]);
             ++g_sendIndex;
 
             if (g_sendIndex == g_bytesToSend) {
                 USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
                 g_bytesToSend = 0;
-                portio_Led(PORTIO_LED_G, PORTIO_OFF);
+                portio_Led(PORTIO_LED_R, PORTIO_OFF);
             }
-        }
+        } else
+            USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
     }
 }
 
