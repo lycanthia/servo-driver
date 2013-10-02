@@ -10,6 +10,7 @@
 #include "stm32f10x.h"
 #include "stm32f10x_conf.h"
 
+#include "debug.h"
 #include "portio.h"
 #include "delay.h"
 #include "servo.h"
@@ -24,25 +25,21 @@ int main(void)
 
     main_Init();    //init everything
 
-    for ( i = 0; i < 20; ++i) {
+    for (i = 0; i < 3; ++i) {
+        debug_Print("Blink");
         portio_Led(PORTIO_LED_R, PORTIO_ON);
-        portio_Led(PORTIO_LED_G, PORTIO_ON);
         delay_MsBlockWait(1000, DEALY_TIMER0);
 
         portio_Led(PORTIO_LED_R, PORTIO_OFF);
-        portio_Led(PORTIO_LED_G, PORTIO_OFF);
         delay_MsBlockWait(1000, DEALY_TIMER0);
     }
 
     //chcking for input
     while(1) {
-    	if(portio_CheckButton(PORTIO_BUTTON1) && portio_CheckButton(PORTIO_BUTTON2)) {
-			portio_Led(PORTIO_LED_G, PORTIO_ON);
+    	if (portio_CheckButton(PORTIO_BUTTON1) && portio_CheckButton(PORTIO_BUTTON2))
 			portio_Led(PORTIO_LED_R, PORTIO_OFF);
-    	} else {
-    		portio_Led(PORTIO_LED_G, PORTIO_OFF);
+    	else
     		portio_Led(PORTIO_LED_R, PORTIO_ON);
-    	}
     }
 
     while(1);
@@ -83,6 +80,7 @@ void main_Init(void)
 {
     rcc_Init();
 
+    debug_Init();
     portio_Init();
     delay_Init();
     servo_Init();

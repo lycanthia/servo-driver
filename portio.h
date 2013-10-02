@@ -1,5 +1,5 @@
 /*
- * Module rsponsible for handling buttons and diodes
+ * Module responsible for handling buttons and diodes
  */
 
 #ifndef __H_PORTIO_H__
@@ -20,8 +20,8 @@
 
 
 void portio_Init(void);
-void portio_Led(uint16_t, int8_t status);
-int8_t portio_CheckButton(uint16_t number);
+void portio_Led(uint16_t led, int8_t status);
+int8_t portio_CheckButton(uint16_t button);
 
 
 

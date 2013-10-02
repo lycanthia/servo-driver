@@ -71,12 +71,13 @@ void delay_MsBlockWait(uint32_t time, uint8_t timer)
     while (delay_timer[timer] < time);
 }
 
+
+
 void TIM1_CC_IRQHandler(void)
 {
     uint8_t i = 0;
 
-    if(TIM_GetITStatus(TIM1,TIM_IT_CC1) == SET)
-    {
+    if (TIM_GetITStatus(TIM1,TIM_IT_CC1) == SET) {
         for (i = 0; i < DELAY_MAXTIMERS; ++i) {
             ++delay_timer[i];
     
