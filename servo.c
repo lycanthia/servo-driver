@@ -10,10 +10,10 @@ void servo_Init(void)
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
     TIM_OCInitTypeDef TIM_OCInitStructure;
 
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);    //clock for GPIOA i AFIO
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);    //clock for GPIOB i AFIO
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);    //clock for GPIOA
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);    //clock for GPIOB
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);     //clock for TIM3
-    //RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
     //----------------------------------------------------------------
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;

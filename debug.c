@@ -40,14 +40,15 @@ void debug_Init(void)
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);  
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
     //----------------------------------------------------------------
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;   
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 
     GPIO_Init(GPIOA, &GPIO_InitStructure);
     //----------------------------------------------------------------
@@ -58,6 +59,8 @@ void debug_Init(void)
     
     NVIC_Init(&NVIC_InitStructure);
     //----------------------------------------------------------------
+    USART_Cmd(USART1, ENABLE);
+
     USART_InitStructure.USART_BaudRate = 115200;
     USART_InitStructure.USART_WordLength = USART_WordLength_8b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
@@ -70,8 +73,6 @@ void debug_Init(void)
     //we enable this interrupt only when buffer will be ready to send 
     USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
     USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
-
-    USART_Cmd(USART1, ENABLE);
 }
 
 void debug_Print(const char *msg)
