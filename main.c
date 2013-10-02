@@ -27,11 +27,11 @@ int main(void)
 
     for (i = 0; i < 10; ++i) {
         debug_Print("Blink");
-        //portio_Led(PORTIO_LED_R, PORTIO_ON);
+        portio_Led(PORTIO_LED_G, PORTIO_ON);
         delay_MsBlockWait(1000, DEALY_TIMER0);
 
-        //portio_Led(PORTIO_LED_R, PORTIO_OFF);
-        //delay_MsBlockWait(1000, DEALY_TIMER0);
+        portio_Led(PORTIO_LED_G, PORTIO_OFF);
+        delay_MsBlockWait(1000, DEALY_TIMER0);
     }
 
     //chcking for input
