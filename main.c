@@ -26,7 +26,9 @@ int main(void)
     main_Init();    //init everything
 
     for (i = 0; i < 10; ++i) {
-        debug_Print("Blink");
+        USART_SendData(USART1, 'A');
+        while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+
         portio_Led(PORTIO_LED_G, PORTIO_ON);
         delay_MsBlockWait(1000, DEALY_TIMER0);
 
@@ -80,6 +82,6 @@ void main_Init(void)
     debug_Init();
     portio_Init();
     delay_Init();
-    servo_Init();
+    //servo_Init();
 }
 

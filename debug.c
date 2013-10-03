@@ -71,27 +71,17 @@ void debug_Init(void)
     USART_Init(USART1, &USART_InitStructure);
    
     //we enable this interrupt only when buffer will be ready to send 
-    USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
     USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 }
 
 void debug_Print(const char *msg)
 {
     uint8_t i;
-    while (g_bytesToSend); //waiting for finish sending
 
-    //copy message
-    for (i = 0; i < TX_BUFF_SIZE; ++i) {
-        if (msg[i] != 0)
-            g_txBuffer[i] = msg[i];
-        else
-            break;
+    for (i = 0; i < 10; i++) {
+        USART_SendData(USART1, (u8) 'A');
+        while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
     }
-
-    g_bytesToSend = i;
-    g_sendIndex = 0;
-
-    USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
 }
 
 void debug_ParseIncoming(void)
@@ -119,18 +109,14 @@ void USART1_IRQHandler(void)
     }
 
     if (USART_GetITStatus(USART1, USART_IT_TXE) == SET) {
-        if (g_bytesToSend) {
+        if (g_bytesToSend != g_sendIndex) {
             portio_Led(PORTIO_LED_R, PORTIO_ON);
             USART_SendData(USART1, g_txBuffer[g_sendIndex]);
             ++g_sendIndex;
-
-            if (g_sendIndex == g_bytesToSend) {
-                USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
-                g_bytesToSend = 0;
-                portio_Led(PORTIO_LED_R, PORTIO_OFF);
-            }
-        } else
+        } else {
             USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
+            portio_Led(PORTIO_LED_R, PORTIO_OFF);
+        }
     }
 }
 
