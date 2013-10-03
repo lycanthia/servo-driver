@@ -1,8 +1,6 @@
 #include "stm32f10x.h"
 #include "stm32f10x_conf.h"
 #include "debug.h"
-#include "portio.h"
-
 
 
 #define TX_BUFF_SIZE    100
@@ -19,12 +17,12 @@ volatile uint8_t g_receivedMessage = 0;
 
 
 
-uint8_t IsStringsEqual(const uint8_t *s1, const uint8_t *s2, uint8_t fields)
+uint8_t IsStringsEqual(volatile const uint8_t *s1, volatile const char *s2, uint8_t fields)
 {
     uint8_t i;
 
     for (i = 0; i < fields; ++i)
-        if (s1[i] != s2[i])
+        if (s1[i] != (uint8_t)s2[i])
             return 0;
 
     return 1;
@@ -94,8 +92,15 @@ void debug_Print(const char *msg)
 void debug_ParseIncoming(void)
 {
     if (g_receivedMessage) {
-        //
+        if (IsStringsEqual(g_rxBuffer, "hello", 5)) {
+           debug_Print("Hello:)");
+        } else if (IsStringsEqual(g_rxBuffer, ":P", 2)) {
+           debug_Print(":P");
+        } else {
+            debug_Print(":(");
+        }
 
+        g_bytesReceived = 0;
         g_receivedMessage = 0;
     }
 }
@@ -117,12 +122,10 @@ void USART1_IRQHandler(void)
 
     if (USART_GetITStatus(USART1, USART_IT_TXE) == SET) {
         if (g_bytesToSend != g_sendIndex) {
-            portio_Led(PORTIO_LED_R, PORTIO_ON);
             USART_SendData(USART1, g_txBuffer[g_sendIndex]);
             ++g_sendIndex;
         } else {
             USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
-            portio_Led(PORTIO_LED_R, PORTIO_OFF);
         }
     }
 }
