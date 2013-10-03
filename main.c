@@ -26,8 +26,7 @@ int main(void)
     main_Init();    //init everything
 
     for (i = 0; i < 10; ++i) {
-        USART_SendData(USART1, 'A');
-        while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+        debug_Print("aaa");
 
         portio_Led(PORTIO_LED_G, PORTIO_ON);
         delay_MsBlockWait(1000, DEALY_TIMER0);

@@ -9,11 +9,11 @@
 #define RX_BUFF_SIZE    100
 
 
-volatile uint16_t g_txBuffer[TX_BUFF_SIZE];
+volatile uint8_t g_txBuffer[TX_BUFF_SIZE];
 volatile uint8_t g_bytesToSend = 0;
 volatile uint8_t g_sendIndex = 0;
 
-volatile uint16_t g_rxBuffer[RX_BUFF_SIZE];
+volatile uint8_t g_rxBuffer[RX_BUFF_SIZE];
 volatile uint8_t g_bytesReceived = 0;
 volatile uint8_t g_receivedMessage = 0;
 
@@ -78,10 +78,17 @@ void debug_Print(const char *msg)
 {
     uint8_t i;
 
-    for (i = 0; i < 10; i++) {
-        USART_SendData(USART1, (u8) 'A');
-        while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-    }
+    for (i = 0; i < TX_BUFF_SIZE; ++i)
+        if (msg[i] > 32)
+            g_txBuffer[i] = msg[i];
+        else
+            break;
+    g_txBuffer[i] = '\r';
+    g_txBuffer[i + 1] = '\n';
+
+    g_bytesToSend = i + 2;
+    g_sendIndex = 0;
+    USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
 }
 
 void debug_ParseIncoming(void)
