@@ -26,7 +26,7 @@ int main(void)
     main_Init();    //init everything
 
     for (i = 0; i < 10; ++i) {
-        debug_Print("aaa");
+        debug_Print("Blink...");
 
         portio_Led(PORTIO_LED_G, PORTIO_ON);
         delay_MsBlockWait(1000, DEALY_TIMER0);

@@ -95,7 +95,7 @@ void debug_ParseIncoming(void)
         if (IsStringsEqual(g_rxBuffer, "hello", 5)) {
            debug_Print("Hello:)");
         } else if (IsStringsEqual(g_rxBuffer, ":P", 2)) {
-           debug_Print(":P");
+           debug_Print(":D");
         } else {
             debug_Print(":(");
         }
