@@ -1,6 +1,7 @@
 #include "stm32f10x.h"
 #include "stm32f10x_conf.h"
 #include "debug.h"
+#include <string.h>
 
 
 #define TX_BUFF_SIZE    100
@@ -16,17 +17,6 @@ volatile uint8_t g_bytesReceived = 0;
 volatile uint8_t g_receivedMessage = 0;
 
 
-
-uint8_t IsStringsEqual(volatile const uint8_t *s1, volatile const char *s2, uint8_t fields)
-{
-    uint8_t i;
-
-    for (i = 0; i < fields; ++i)
-        if (s1[i] != (uint8_t)s2[i])
-            return 0;
-
-    return 1;
-}
 
 void debug_Init(void)
 {
@@ -76,8 +66,10 @@ void debug_Print(const char *msg)
 {
     uint8_t i;
 
+    while (g_bytesToSend != g_sendIndex);
+
     for (i = 0; i < TX_BUFF_SIZE; ++i)
-        if (msg[i] > 32)
+        if (msg[i] > 31)
             g_txBuffer[i] = msg[i];
         else
             break;
@@ -92,9 +84,9 @@ void debug_Print(const char *msg)
 void debug_ParseIncoming(void)
 {
     if (g_receivedMessage) {
-        if (IsStringsEqual(g_rxBuffer, "hello", 5)) {
+        if (!strcmp((char *)g_rxBuffer, "hello")) {
            debug_Print("Hello:)");
-        } else if (IsStringsEqual(g_rxBuffer, ":P", 2)) {
+        } else if (!strcmp((char *)g_rxBuffer, ":P")) {
            debug_Print(":D");
         } else {
             debug_Print(":(");
@@ -112,8 +104,10 @@ void USART1_IRQHandler(void)
             g_rxBuffer[g_bytesReceived] = USART_ReceiveData(USART1);
             ++g_bytesReceived;
 
-            if (g_rxBuffer[g_bytesReceived - 1] < 32)
+            if (g_rxBuffer[g_bytesReceived - 1] < 32) {
+                g_rxBuffer[g_bytesReceived - 1] = 0;    //NULL instead of undefined char
                 g_receivedMessage = 1;
+            }
 
             if (g_bytesReceived == RX_BUFF_SIZE)
                 g_receivedMessage = 1;
